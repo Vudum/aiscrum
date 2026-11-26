@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scrum Gym Architecture</title>
+<style>
+  :root { color-scheme: light; --ink: #1b2430; --muted: #5d6b78; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f6f7fb; color: var(--ink);
+         font: 17px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1180px; margin: 0 auto; padding: 28px 16px 40px; }
+  h1 { font-size: 30px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 22px; }
+  h2 { font-size: 20px; margin: 30px 0 12px; }
+
+  /* start order */
+  .start { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .s { background: #fff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .s .k { font-size: 13px; font-weight: 700; color: #fff; display: inline-block; padding: 2px 10px;
+          border-radius: 20px; margin-bottom: 6px; }
+  .s b { display: block; font-size: 18px; }
+  .s span { color: var(--muted); font-size: 15px; }
+  .s code { background: #eef1f6; padding: 1px 6px; border-radius: 5px; font-size: 15px; }
+  .later { border: 2px dashed #c3cad6; box-shadow: none; background: transparent; }
+
+  /* diagram */
+  .card { background: #fff; border-radius: 18px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  svg { width: 100%; height: auto; display: block; }
+  .steps { list-style: none; padding: 0; margin: 16px 0 0; display: grid;
+           grid-template-columns: 1fr 1fr; gap: 10px 22px; }
+  .steps code { background: #eef1f6; padding: 0 5px; border-radius: 4px; font-size: 14px; }
+  .steps li:empty { display: none; }
+  @media (min-width: 761px) { .steps li:empty { display: block; } }
+  .steps li { display: flex; gap: 10px; align-items: flex-start; font-size: 16px; }
+  .steps i { font-style: normal; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--ink);
+             color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 15px; }
+  .note { margin-top: 18px; background: #fff7e0; border-radius: 12px; padding: 12px 16px; font-size: 16px; }
+
+  @media (max-width: 760px) {
+    .start { grid-template-columns: 1fr 1fr; }
+    .steps { grid-template-columns: 1fr; }
+    h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Scrum Gym — how it works</h1>
+  <p class="sub">You play one Scrum role. AI teammates play the rest.</p>
+
+  <h2>What starts first</h2>
+  <div class="start">
+    <div class="s"><span class="k" style="background:#16a34a">1st</span><b>App server</b><span>Run <code>python app.py</code></span></div>
+    <div class="s"><span class="k" style="background:#2563eb">2nd</span><b>Browser</b><span>Open <code>localhost:5050</code></span></div>
+    <div class="s"><span class="k" style="background:#7c3aed">3rd</span><b>Pick a role</b><span>The kickoff meeting starts</span></div>
+    <div class="s later"><span class="k" style="background:#94a3b8">Only when needed</span><b>Claude + MCP</b><span>Called during and after meetings</span></div>
+  </div>
+
+  <h2>What happens in a meeting</h2>
+  <div class="card">
+    <svg viewBox="0 0 1100 520" role="img" aria-label="Scrum Gym block diagram">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#1b2430"/>
+        </marker>
+        <filter id="sh" x="-10%" y="-10%" width="120%" height="130%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity=".12"/>
+        </filter>
+      </defs>
+      <style>
+        .box { filter: url(#sh); }
+        .t { font: 700 22px system-ui, sans-serif; fill: #fff; }
+        .d { font: 16px system-ui, sans-serif; fill: #fff; opacity: .92; }
+        .e { font: 34px system-ui, "Apple Color Emoji", "Segoe UI Emoji", sans-serif; }
+        .line { stroke: #1b2430; stroke-width: 3; fill: none; marker-end: url(#a); }
+        .num { fill: #1b2430; }
+        .nt { font: 700 17px system-ui, sans-serif; fill: #fff; }
+        .lab { font: 15px system-ui, sans-serif; fill: #5d6b78; }
+      </style>
+
+      <!-- Row 1 -->
+      <g class="box">
+        <rect x="20" y="40" width="270" height="140" rx="20" fill="#2563eb"/>
+        <text class="e" x="40" y="92">🧑‍💻</text>
+        <text class="t" x="92" y="88">You</text>
+        <text class="d" x="40" y="128">Browser: you talk,</text>
+        <text class="d" x="40" y="152">teammates talk back</text>
+      </g>
+      <g class="box">
+        <rect x="415" y="40" width="270" height="140" rx="20" fill="#16a34a"/>
+        <text class="e" x="435" y="92">🖥️</text>
+        <text class="t" x="487" y="88">App server</text>
+        <text class="d" x="435" y="128">Flask (app.py): runs the</text>
+        <text class="d" x="435" y="152">meeting, Scrum rules</text>
+      </g>
+      <g class="box">
+        <rect x="810" y="40" width="270" height="140" rx="20" fill="#7c3aed"/>
+        <text class="e" x="830" y="92">🤖</text>
+        <text class="t" x="882" y="88">AI teammates</text>
+        <text class="d" x="830" y="128">Sam · Priya · Marcus · Ana</text>
+        <text class="d" x="830" y="152">each line written by Claude</text>
+      </g>
+
+      <!-- Row 2 -->
+      <g class="box">
+        <rect x="20" y="340" width="220" height="140" rx="20" fill="#0891b2"/>
+        <text class="e" x="38" y="392">📋</text>
+        <text class="t" x="88" y="388">Workspace</text>
+        <text class="d" x="38" y="428">Board · backlog ·</text>
+        <text class="d" x="38" y="452">charts · demo</text>
+      </g>
+      <g class="box">
+        <rect x="300" y="340" width="220" height="140" rx="20" fill="#f97316"/>
+        <text class="e" x="318" y="392">📨</text>
+        <text class="t" x="368" y="388">MCP client</text>
+        <text class="d" x="318" y="428">Inside the app server.</text>
+        <text class="d" x="318" y="452">Sends tool requests</text>
+      </g>
+      <g class="box">
+        <rect x="590" y="340" width="220" height="140" rx="20" fill="#c2410c"/>
+        <text class="e" x="608" y="392">🔧</text>
+        <text class="t" x="658" y="388">MCP server</text>
+        <text class="d" x="608" y="428">Separate program with</text>
+        <text class="d" x="608" y="452">12 board tools</text>
+      </g>
+      <g class="box">
+        <rect x="870" y="340" width="210" height="140" rx="20" fill="#475569"/>
+        <text class="e" x="886" y="392">💾</text>
+        <text class="t" x="936" y="388">Project file</text>
+        <text class="d" x="886" y="428">Stories, meetings,</text>
+        <text class="d" x="886" y="452">charts (JSON)</text>
+      </g>
+
+      <!-- 1: you -> server -->
+      <path class="line" d="M290,85 L410,85"/>
+      <circle class="num" cx="350" cy="62" r="16"/><text class="nt" x="350" y="68" text-anchor="middle">1</text>
+      <!-- 2: server -> AI -->
+      <path class="line" d="M685,85 L805,85"/>
+      <circle class="num" cx="745" cy="62" r="16"/><text class="nt" x="745" y="68" text-anchor="middle">2</text>
+      <!-- 3: reply back -->
+      <path class="line" d="M810,140 L690,140"/>
+      <path class="line" d="M415,140 L295,140"/>
+      <circle class="num" cx="745" cy="164" r="16"/><text class="nt" x="745" y="170" text-anchor="middle">3</text>
+      <circle class="num" cx="350" cy="164" r="16"/><text class="nt" x="350" y="170" text-anchor="middle">3</text>
+      <!-- 4: app server -> MCP client -->
+      <path class="line" d="M550,180 C550,265 410,250 410,335"/>
+      <circle class="num" cx="480" cy="258" r="16"/><text class="nt" x="480" y="264" text-anchor="middle">4</text>
+      <text class="lab" x="568" y="250">meeting ends:</text>
+      <text class="lab" x="568" y="270">update the board</text>
+      <!-- 5: client -> MCP server -->
+      <path class="line" d="M520,420 L585,420"/>
+      <circle class="num" cx="553" cy="396" r="16"/><text class="nt" x="553" y="402" text-anchor="middle">5</text>
+      <!-- 6: MCP server -> file -->
+      <path class="line" d="M810,420 L865,420"/>
+      <circle class="num" cx="838" cy="396" r="16"/><text class="nt" x="838" y="402" text-anchor="middle">6</text>
+      <!-- 7: file -> workspace -->
+      <path class="line" d="M975,480 C975,515 130,515 130,485"/>
+      <circle class="num" cx="550" cy="508" r="16"/><text class="nt" x="550" y="514" text-anchor="middle">7</text>
+      <!-- you look at workspace -->
+      <path d="M130,180 L130,335" stroke="#94a3b8" stroke-width="3" stroke-dasharray="7 6" fill="none"/>
+      <text class="lab" x="145" y="252">you check it</text>
+      <text class="lab" x="145" y="272">between meetings</text>
+    </svg>
+
+    <ol class="steps">
+      <li><i>1</i><span><b>You speak.</b> The browser turns your voice into text and sends it to the app server.</span></li>
+      <li><i>4</i><span><b>Meeting ends.</b> The app server hands the board changes to its MCP client.</span></li>
+      <li><i>2</i><span><b>App server picks who answers</b> and asks that AI teammate for one line.</span></li>
+      <li><i>5</i><span><b>MCP client asks the MCP server</b> to run a tool, e.g. <code>add_to_sprint</code>.</span></li>
+      <li><i>3</i><span><b>The teammate's line comes back</b> and your browser says it out loud.</span></li>
+      <li><i>6</i><span><b>MCP server makes the change</b> and saves it in the project file.</span></li>
+      <li></li>
+      <li><i>7</i><span><b>You see it</b> in the board, charts and demo.</span></li>
+    </ol>
+
+    <div class="note"><b>Two different servers:</b> the <b>app server</b> is Scrum Gym itself (Flask) and runs the meetings.
+      The <b>MCP server</b> is a small separate program that owns the board. The app's <b>MCP client</b> asks it to make changes.<br>
+      Steps 1–3 repeat for every turn. Steps 4–7 happen once, when the meeting closes. No API key? Teammates read scripted lines.</div>
+  </div>
+</main>
+</body>
+</html>

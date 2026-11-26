@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scrum Gym</title>
+<meta name="description" content="Practice a real Scrum project: pick your role, and an AI team plays the rest.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="./" aria-label="Scrum Gym home">Scrum&nbsp;Gym</a>
+  <div class="product" id="productName"></div>
+  <div class="progress" id="progress" hidden></div>
+  <button class="ghost small" id="resetBtn" hidden>Start over</button>
+</header>
+
+<main id="offline" class="start offline" style="font-family:system-ui,sans-serif;max-width:640px;margin:40px auto;padding:0 20px">
+  <h1>Scrum Gym</h1>
+  <p class="lead" id="offlineMsg">If this page stays like this, Scrum Gym's server isn't running.
+    It can't work as a plain file. Start it with <code>python app.py</code> in the aiscrum folder,
+    then open <code>http://localhost:5050</code> in your browser.</p>
+</main>
+
+<main id="start" class="start" hidden>
+  <section class="start-hero">
+    <h1>Practice Scrum<br>with an AI team.</h1>
+    <p class="lead">Pick your role. AI plays the rest of the team.</p>
+  </section>
+  <form id="startForm" class="start-form">
+    <fieldset>
+      <legend>Who are you on this team?</legend>
+      <div class="roles" id="roleChoices"></div>
+    </fieldset>
+    <label class="name-field">Your name <span>(optional, the team uses it)</span>
+      <input id="nameInput" maxlength="30" autocomplete="given-name" placeholder="e.g. Lakshmi"></label>
+    <button type="submit" class="primary big" id="startBtn" disabled>Join the kickoff meeting</button>
+    <p class="fineprint">Turn your sound on. Your teammates speak out loud, and the app tells you what to do at every step.</p>
+  </form>
+</main>
+
+<div id="app" hidden>
+  <div class="viewbar">
+    <div class="switch" role="tablist" aria-label="View">
+      <button role="tab" data-view="meeting" aria-selected="true">Meeting room</button>
+      <button role="tab" data-view="work" aria-selected="false">Team workspace</button>
+    </div>
+    <div class="picker" id="picker" role="group" aria-label="Start a meeting"></div>
+    <div class="taskpill" id="taskPill"></div>
+  </div>
+  <p class="guide" id="guide" aria-live="polite"></p>
+  <div class="notice" id="notice" hidden></div>
+
+  <!-- MEETING ROOM -->
+  <section id="meetingView" class="meeting">
+    <div class="stage">
+      <div class="stage-head">
+        <div>
+          <h2 id="ceremonyTitle"></h2>
+          <p id="ceremonyPurpose"></p>
+        </div>
+        <div class="clock" id="clock" aria-label="Meeting time">00:00</div>
+      </div>
+      <div class="live" id="liveArea">
+      <ul class="tiles" id="tiles"></ul>
+      <button class="caption" id="caption" aria-live="polite" title="Click to skip"></button>
+      <p class="you-said" id="youSaid" hidden></p>
+      <form class="controls" id="composer">
+        <button type="button" class="ctl mic" id="micBtn" aria-pressed="false" title="Click to talk; click again when you're done">Talk</button>
+        <label class="sr" for="msgInput">Say something</label>
+        <input id="msgInput" maxlength="2500" autocomplete="off" placeholder="Speak, or type here and press Enter">
+        <button type="submit" class="ctl send" id="sendBtn">Send</button>
+        <button type="button" class="ctl hand-btn" id="handBtn" aria-pressed="false" title="Ask for the floor">Raise hand</button>
+        <button type="button" class="ctl" id="speedBtn" title="How fast teammates talk">Speed: normal</button>
+        <button type="button" class="ctl" id="soundBtn" aria-pressed="true" title="Teammates' voices on/off">Sound on</button>
+        <button type="button" class="ctl leave" id="endBtn">End meeting</button>
+        <button type="button" class="ctl nothing" id="nothingBtn" hidden>Nothing from me</button>
+      </form>
+      </div>
+      <section class="after" id="afterArea" hidden>
+        <h3 id="afterTitle"></h3>
+        <ul class="minutes" id="afterSummary"></ul>
+        <p class="after-next" id="afterNextLabel"></p>
+        <div class="after-actions" id="afterActions"></div>
+      </section>
+    </div>
+
+    <aside class="side">
+      <section class="demo-live" id="demoLive" hidden></section>
+      <section class="stories-live" id="storiesLive" hidden></section>
+      <section class="agenda" id="agenda"></section>
+      <section class="checklist">
+        <h3>Your to-dos</h3>
+        <p class="hint" id="todoHint">Skip them and your teammates will bring it up in the next meeting.</p>
+        <ul id="tasks"></ul>
+      </section>
+      <details class="notes" id="notesBox">
+        <summary>Meeting notes (transcript)</summary>
+        <ol id="notes"></ol>
+      </details>
+    </aside>
+  </section>
+
+  <!-- WORKSPACE -->
+  <section id="workView" class="work" hidden>
+    <div class="tabs" role="tablist" id="tabs">
+      <button role="tab" data-tab="board" aria-selected="true">Board</button>
+      <button role="tab" data-tab="backlog">Backlog</button>
+      <button role="tab" data-tab="charts">Charts</button>
+      <button role="tab" data-tab="demo">Demo</button>
+      <button role="tab" data-tab="scenes">Behind the scenes</button>
+    </div>
+    <div class="panel" id="panel-board" role="tabpanel"></div>
+    <div class="panel" id="panel-backlog" role="tabpanel" hidden></div>
+    <div class="panel" id="panel-charts" role="tabpanel" hidden></div>
+    <div class="panel" id="panel-demo" role="tabpanel" hidden></div>
+    <div class="panel" id="panel-scenes" role="tabpanel" hidden></div>
+  </section>
+</div>
+
+<dialog id="cardDialog" class="card-dialog"><form method="dialog" id="cardForm"></form></dialog>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="static/app.js"></script>
+</body>
+</html>
