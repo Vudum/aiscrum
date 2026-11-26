@@ -72,7 +72,13 @@ def estimate_story(card_id: int, points: int, estimated_by: str = "") -> str:
 def add_to_sprint(card_id: int, without_test: bool = False) -> str:
     """Product Owner: pull a backlog story into the current sprint (To Do), with its test ticket.
     without_test=true only when the team agreed the story's testing waits for a later sprint."""
-    return _run(board.add_to_sprint, card_id, without_test)
+    out = _run(board.add_to_sprint, card_id, without_test)
+    if out.startswith("OK"):
+        st = board.load(_path())
+        now, cap = board.committed(st, st["sprint"]), board.capacity(st)
+        if now > cap:
+            out += f" (over capacity: Sprint {st['sprint']} now has {now} of {cap} points; allowed, the team decides)"
+    return out
 
 
 @mcp.tool()

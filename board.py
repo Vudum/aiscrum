@@ -14,6 +14,7 @@ from __future__ import annotations
 import contextvars
 import copy
 import json
+import math
 import os
 import re
 import time
@@ -548,12 +549,11 @@ def add_to_sprint(state, card_id, without_test=False):
     # Only when the team agreed that testing waits for a later sprint: the story goes in alone and its
     # test ticket stays in the backlog.
     defer_test = bool(without_test) and card["type"] == "story"
-    if defer_test:
+    if defer_test and not is_carried(card):
         add = pts_of(state, card)
-    if now + add > cap:
-        raise ValueError(f"Over capacity: story {card['id']} needs {add} points"
-                         + ("" if defer_test else " (incl. testing)")
-                         + f", the sprint already has {now} of {cap}. Take something out first, or split the story.")
+    # Capacity is a forecast, not a limit: the team may take on more (the board shows it's over).
+    if is_carried(card):
+        card["carried_from"] = card.get("carried_from") or sprint - 1   # keeps costing only the work left
     card["status"] = "todo"
     card["sprint"] = sprint
     card["added_mid_sprint"] = state["sprint_state"] == "active"  # scope change after planning
@@ -596,13 +596,42 @@ def pts_of(state, c) -> int:
     return points(c) or estimate_for(c["title"])
 
 
+def is_carried(c) -> bool:
+    """A story that was worked on in an earlier sprint but not finished (it has work and test time left)."""
+    return c.get("type") == "story" and (bool(c.get("carried_from")) or (
+        c.get("status") == "backlog" and c.get("work_left") is not None and c.get("test_left") is not None))
+
+
+def remaining(state, c) -> int:
+    """Work still left on a carried-over story, build + testing (whole points, at least 1).
+    Testing not started yet counts its full test estimate."""
+    test = c.get("test_left")
+    if test is None:
+        t = test_ticket(state, c["id"])
+        test = pts_of(state, t) if t and t["status"] != "done" else 0
+    return max(1, math.ceil(float(c.get("work_left") or 0) + float(test)))
+
+
+def _load(state, c) -> int:
+    """What a card costs this sprint's capacity: unfinished carried-over work counts what is left, not its full size."""
+    if c["type"] == "test":
+        story = next((x for x in state["cards"] if x["id"] == c.get("test_for")), None)
+        if story and is_carried(story):
+            return 0   # already in the story's remaining work
+    if is_carried(c):
+        return remaining(state, c)
+    return pts_of(state, c)
+
+
 def committed(state, sprint) -> int:
     """Points already in the sprint (stories, bugs and test stories)."""
-    return sum(pts_of(state, c) for c in sprint_cards(state, sprint))
+    return sum(_load(state, c) for c in sprint_cards(state, sprint))
 
 
 def with_test(state, c) -> int:
     """A story plus its test story: what it costs the team's capacity."""
+    if is_carried(c):
+        return remaining(state, c)
     t = test_ticket(state, c["id"])
     return pts_of(state, c) + (pts_of(state, t) if t else 0)
 
@@ -1317,18 +1346,23 @@ def after_meeting(state: dict) -> str | None:
             and (c["id"] in accepted or c.get("test_for") in accepted))
         state["sprint_state"] = "reviewed"
     if t == "retro" and state["sprint_state"] == "reviewed":
+        last = s >= MAX_SPRINTS
         for c in sprint_stories(state, s):
+            if c["status"] == "done":
+                continue
             t = test_ticket(state, c["id"])
-            if t and c["status"] != "done":
-                t.update(status="backlog", sprint=None, test_result="")
-        for c in sprint_stories(state, s):
-            if c["status"] != "done":
-                c["status"] = "backlog"
-                c["sprint"] = None
-                c["priority"] = -1 if c["type"] == "story" else 0
-                state["open_items"].append(
-                    f"#{c['id']} {c['title']} was not finished in Sprint {s} and went back to the backlog.")
-        if s >= MAX_SPRINTS:
+            if last:   # no next sprint: back to the backlog
+                if t:
+                    t.update(status="backlog", sprint=None, test_result="")
+                c.update(status="backlog", sprint=None, priority=-1 if c["type"] == "story" else 0)
+                state["open_items"].append(f"#{c['id']} {c['title']} was not finished and went back to the backlog.")
+                continue
+            # Not finished: it moves on to the next sprint automatically, with the progress it has.
+            c.update(sprint=s + 1, carried_from=s, picked_live=False, added_mid_sprint=False)
+            if t and t["status"] != "done":
+                t.update(sprint=s + 1)
+            state["open_items"].append(f"#{c['id']} {c['title']} was not finished in Sprint {s} and moved to Sprint {s + 1}.")
+        if last:
             state["complete"] = True
             return "That was our last sprint. Great work, everyone!"
         state["sprint"] = s + 1

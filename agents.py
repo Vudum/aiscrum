@@ -614,7 +614,8 @@ def _keeper_context(state: dict, transcript: list[dict]) -> str:
                       for i, m in enumerate(recent))
     return (f"MEETING: {cer['label']} (Sprint {s}, sprint is {state['sprint_state']})\n"
             f"CAPACITY: {board.committed(state, s)} of {board.capacity(state)} points used in Sprint {s} "
-            f"(a story counts with its test ticket; if only the story fits, its test ticket stays in the backlog)\n"
+            f"(a story counts with its test ticket; capacity is only the team's estimate: the Product Owner may go over it, "
+            f"so add the stories they decide on even if the total is higher)\n"
             f"SPRINT GOAL: {state['sprint_goals'].get(str(s)) or '(none)'}\n"
             f"BOARD:\n{cards}\n\nLAST MESSAGES (the newest is marked NEW):\n{lines}")
 

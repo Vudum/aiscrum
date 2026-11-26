@@ -824,12 +824,13 @@ def _pick_turn(state: dict, m: dict):
         fits = total <= cap
         turn = {**turn,
                 "instruction": (f"The proposal is {names}: {total} points in total. Team capacity is about {cap} points "
-                                "per sprint (how much we can finish). " + ("Say it fits." if fits else "Push back: it's too much, suggest dropping the last one.")
+                                "per sprint (our estimate of how much we can finish). " + ("Say it fits." if fits else
+                                "Say it's over our estimate and that the last one may not get finished; the Product Owner decides, unfinished work moves to the next sprint.")
                                 + " Use these real numbers."),
                 "prompt": (f"Check the proposal against capacity: {names} = {total} points; team capacity is about "
                            f"{cap} points per sprint. Say if it fits or push back."),
                 "script": (f"Those add up to {total} points, and our capacity is about {cap}, so that fits."
-                           if fits else f"That's {total} points, more than our {cap}. Can we drop the last one?")}
+                           if fits else f"That's {total} points, more than our estimate of {cap}. Your call; anything unfinished moves to the next sprint.")}
     return turn, si
 
 
@@ -1386,6 +1387,10 @@ def card_action(card_id: int, action: str):
             raise UserError("The Product Owner decides what goes into the sprint (during Sprint Planning anyone can pull in what the team agreed).")
         if d.get("add"):
             board.add_to_sprint(state, card_id)
+            now, cap = board.committed(state, state["sprint"]), board.capacity(state)
+            if now > cap:
+                board.log_mcp(state, "po", "add_to_sprint", {"card_id": card_id},
+                              f"Added. Sprint {state['sprint']} now has {now} of {cap} points: over the capacity estimate.")
         else:
             board.remove_from_sprint(state, card_id)
     elif action == "test":
