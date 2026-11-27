@@ -1,6 +1,6 @@
-# Scrum Gym – Architecture
+# Scrum Simu – Architecture
 
-Scrum Gym is a browser-based Scrum simulator. You play one role (Product Owner, Scrum Master, Developer or Tester), and AI agents (Claude) play the rest of the team. You run real meetings by voice, then watch the board, charts and demo change.
+Scrum Simu is a browser-based Scrum simulator. You play one role (Product Owner, Scrum Master, Developer or Tester), and AI agents (Claude) play the rest of the team. You run real meetings by voice, then watch the board, charts and demo change.
 
 ---
 

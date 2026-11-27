@@ -1448,6 +1448,6 @@ def prototype(sprint: int):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", "5050"))
-    print(f"\n  Scrum Gym running:  http://localhost:{port}\n"
+    print(f"\n  Scrum Simu running:  http://localhost:{port}\n"
           f"  Mode: {'AI (' + agents.MODEL + ')' if agents.ai_enabled() else 'Practice (no API key)'}\n")
     app.run(host="127.0.0.1", port=port, debug=False)

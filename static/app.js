@@ -1,4 +1,4 @@
-/* Scrum Gym - front end (plain JavaScript, no build step) */
+/* Scrum Simu - front end (plain JavaScript, no build step) */
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -30,7 +30,7 @@ async function api(path, body) {
     r = await fetch(path, opts);
   } catch (e) {
     serverLost();
-    throw new Error("Can't reach the Scrum Gym server. Waiting for it to come back...");
+    throw new Error("Can't reach the Scrum Simu server. Waiting for it to come back...");
   }
   if (lostTimer) serverBack();
   const data = await r.json().catch(() => ({}));
@@ -50,7 +50,7 @@ function serverLost() {
     bar.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:999;background:#b91c1c;color:#fff;padding:10px 16px;font:14px system-ui;text-align:center";
     document.body.appendChild(bar);
   }
-  bar.innerHTML = "Lost connection to the Scrum Gym server. If you closed Terminal, run <code>python app.py</code> again. The meeting will continue by itself.";
+  bar.innerHTML = "Lost connection to the Scrum Simu server. If you closed Terminal, run <code>python app.py</code> again. The meeting will continue by itself.";
   bar.hidden = false;
   lostTimer = setInterval(async () => {
     try { const r = await fetch("api/meta"); if (r.ok) serverBack(true); } catch (e) { /* still down */ }
@@ -586,7 +586,7 @@ async function init() {
   try {
     META = await api("api/meta");
   } catch (e) {
-    $("#offlineMsg").innerHTML = `Scrum Gym can't reach its server. It doesn't work as a plain file:
+    $("#offlineMsg").innerHTML = `Scrum Simu can't reach its server. It doesn't work as a plain file:
       start it with <code>python app.py</code> in the aiscrum folder, then open
       <code>http://localhost:5050</code> in your browser.`;
     return;

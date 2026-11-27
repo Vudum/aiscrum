@@ -1,4 +1,4 @@
-# Scrum Gym
+# Scrum Simu
 
 Practice a real Scrum project in your browser. Pick a role (Product Owner or Scrum Master).
 AI teammates play everyone else, including the Developer and the Tester. They run the ceremonies with you,
@@ -95,8 +95,8 @@ your cards too.
 ## Put it on lvudum.com (cPanel / Aquahost)
 
 1. cPanel -> **Setup Python App** -> Create application:
-   Python 3.10+ (3.11 or newer is best), application root `scrumgym`,
-   application URL `lvudum.com/scrumgym` (or a subdomain), startup file `passenger_wsgi.py`,
+   Python 3.10+ (3.11 or newer is best), application root `scrumsimu`,
+   application URL `lvudum.com/scrumsimu` (or a subdomain), startup file `passenger_wsgi.py`,
    entry point `application`.
 2. Upload this folder's files into the application root (not `.venv`, `data` or `.env`).
 3. In the app page, run pip install with `requirements.txt`.
@@ -106,4 +106,4 @@ your cards too.
    (some shared hosts block starting a second process).
 6. Restart the app.
 
-The page uses relative links, so it works at a path like `lvudum.com/scrumgym/` (keep the trailing slash) or on a subdomain.
+The page uses relative links, so it works at a path like `lvudum.com/scrumsimu/` (keep the trailing slash) or on a subdomain.

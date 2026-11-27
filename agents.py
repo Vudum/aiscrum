@@ -396,7 +396,7 @@ def _context(state: dict, role: str, transcript: list[dict]) -> str:
 def _system(state: dict, role: str) -> str:
     return (
         PERSONAS[role].format(name=board.name(role)) + "\n"
-        "You are in a Scrum training simulator called Scrum Gym. Rules:\n"
+        "You are in a Scrum training simulator called Scrum Simu. Rules:\n"
         "- Reply in ONE short sentence (two at most, under 25 words), spoken style, as yourself only. No names prefix, no markdown, "
         "no stage directions like (nods).\n"
         "- The Product Owner decides scope and priorities. You may raise a concern ONCE; if they still decide, "

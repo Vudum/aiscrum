@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Scrum Gym Architecture</title>
+<title>Scrum Simu Architecture</title>
 <style>
   :root { color-scheme: light; --ink: #1b2430; --muted: #5d6b78; }
   * { box-sizing: border-box; }
@@ -46,7 +46,7 @@
 </head>
 <body>
 <main>
-  <h1>Scrum Gym — how it works</h1>
+  <h1>Scrum Simu — how it works</h1>
   <p class="sub">You play one Scrum role. AI teammates play the rest.</p>
 
   <h2>What starts first</h2>
@@ -59,7 +59,7 @@
 
   <h2>What happens in a meeting</h2>
   <div class="card">
-    <svg viewBox="0 0 1100 520" role="img" aria-label="Scrum Gym block diagram">
+    <svg viewBox="0 0 1100 520" role="img" aria-label="Scrum Simu block diagram">
       <defs>
         <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
           <path d="M0,0 L10,5 L0,10 z" fill="#1b2430"/>
@@ -174,7 +174,7 @@
       <li><i>7</i><span><b>You see it</b> in the board, charts and demo.</span></li>
     </ol>
 
-    <div class="note"><b>Two different servers:</b> the <b>app server</b> is Scrum Gym itself (Flask) and runs the meetings.
+    <div class="note"><b>Two different servers:</b> the <b>app server</b> is Scrum Simu itself (Flask) and runs the meetings.
       The <b>MCP server</b> is a small separate program that owns the board. The app's <b>MCP client</b> asks it to make changes.<br>
       Steps 1–3 repeat for every turn. Steps 4–7 happen once, when the meeting closes. No API key? Teammates read scripted lines.</div>
   </div>
