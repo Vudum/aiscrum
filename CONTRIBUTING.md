@@ -80,7 +80,7 @@ Flask's test client (`app.app.test_client()`) instead of touching the original.
 
 ## 6. Deploy on cPanel
 
-1. cPanel -> **Setup Python App** -> Create application: Python 3.10+, application root `scrumsimu`,
+1. cPanel -> **Setup Python App** -> Create application: Python 3.10+, application root `aiscrum`,
    startup file `passenger_wsgi.py`, entry point `application`.
 2. Put the code in the application root (`git clone https://github.com/Vudum/aiscrum.git .`
    via SSH / cPanel Git, or upload the files without `.venv`, `data` and `.env`).
@@ -88,7 +88,7 @@ Flask's test client (`app.app.test_client()`) instead of touching the original.
 4. Add the settings from `.env.example` as environment variables (or create a `.env`). Use an API key
    with a monthly spend limit.
 5. If AI teammates never answer on the host, set `MCP_TRANSPORT=memory` (some hosts block a second process).
-6. Restart the app. It works under a path like `yourdomain.com/scrumsimu/` (keep the trailing slash).
+6. Restart the app. It works under a path like `yourdomain.com/aiscrum/` (keep the trailing slash).
 
 ## Settings and limits
 
